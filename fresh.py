@@ -5,7 +5,7 @@ from django.db import connection
 
 
 class Command(BaseCommand):
-    help = 'Drop all tables and delete migration files'
+    help = 'Drops all tables and deletes migration files'
 
     def add_arguments(self, parser):
         parser.add_argument('basepath', type=str)
@@ -35,4 +35,4 @@ class Command(BaseCommand):
         except Exception as e:
             raise CommandError('An error has ocurred while dropping tables. \n %s' % e)
 
-        self.stdout.write(self.style.SUCCESS('Tables has been dropped'))
+        self.stdout.write(self.style.SUCCESS('Tables have been dropped'))
