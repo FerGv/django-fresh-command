@@ -1,17 +1,23 @@
+"""Fresh command."""
+
+# Python
 import os
 
+# Django
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
 
 class Command(BaseCommand):
-    help = 'Drop all tables, then remake and apply migrations'
+    """Drop all tables, then remake and apply migrations."""
 
-    def add_arguments(self, parser):
-        parser.add_argument('basepath', type=str)
+    help = 'Drop all tables, then remake and apply migrations.'
 
     def handle(self, *args, **options):
+        """Run SQL command and delete migrations files."""
+
         try:
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -34,11 +40,9 @@ class Command(BaseCommand):
                     END $$;
                 """, [])
 
-            for root, dirs, files in os.walk(options['basepath']):
+            for root, dirs, files in os.walk(settings.BASE_DIR):
                 for name in files:
-                    if 'migrations' in root and \
-                        'apps' in root and \
-                            name != '__init__.py':
+                    if 'migrations' in root and name != '__init__.py':
                         os.remove(os.path.join(root, name))
 
             call_command('makemigrations')
