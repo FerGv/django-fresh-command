@@ -6,7 +6,7 @@ from django.db import connection
 
 
 class Command(BaseCommand):
-    help = 'Drops all tables, then remakes and migrates migrations'
+    help = 'Drop all tables, then remake and apply migrations'
 
     def add_arguments(self, parser):
         parser.add_argument('basepath', type=str)
