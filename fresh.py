@@ -15,6 +15,13 @@ class Command(BaseCommand):
 
     help = 'Drop all tables, then remake and apply migrations.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--delete',
+            action='store_true',
+            help='Delete migration files',
+        )
+
     def handle(self, *args, **options):
         """Run SQL command and delete migrations files."""
 
@@ -40,10 +47,12 @@ class Command(BaseCommand):
                     END $$;
                 """, [])
 
-            for root, dirs, files in os.walk(settings.BASE_DIR):
-                for name in files:
-                    if 'migrations' in root and name != '__init__.py':
-                        os.remove(os.path.join(root, name))
+            # Delete migration files from system storage.
+            if options['delete']:
+                for root, dirs, files in os.walk(settings.BASE_DIR):
+                    for name in files:
+                        if 'migrations' in root and name != '__init__.py':
+                            os.remove(os.path.join(root, name))
 
             call_command('makemigrations')
             call_command('migrate')
